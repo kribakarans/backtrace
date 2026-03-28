@@ -1,6 +1,6 @@
-# Deploy Xplore to Github Pages
+# Deploy Kodex to Github Pages
 
-name: Deploy Xplore
+name: Deploy Kodex
 
 on:
   # Runs on pushes targeting the default branch
@@ -34,31 +34,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Xplore
+      - name: Install Kodex
         run: |
-          echo "Install Ctags ..."
-          sudo apt-get update && \
-          sudo apt-get install -y --no-install-recommends universal-ctags
+          echo "Install Prerequisites ..."
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends universal-ctags global
 
-          echo "Clone Xplore ..."
-          git clone https://gitlab.com/klabkode/devkit/xplore/xplore-xref.git /tmp/xplore
+          echo "Clone Kodex ..."
+          git clone https://gitlab.com/klabkode/ktools/kodex.git /tmp/kodex
+
+          echo "Install Kodex dependencies ..."
+          pip install -r /tmp/kodex/requirements.txt
 
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
 
-      - name: Build Xplore
+      - name: Build Kodex
         run: |
           (
             set -e
 
-            cd /tmp/xplore
-            echo "Install Xplore ..."
+            cd /tmp/kodex
+            echo "Install Kodex ..."
             make install
           )
 
-          echo "Build Xplore ..."
-          xplore-build-xref "BACKTRACE" "https://github.com/kribakarans/backtrace/"
+          echo "Build Kodex ..."
+          kodex-build "BACKTRACE" "https://github.com/kribakarans/backtrace"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
